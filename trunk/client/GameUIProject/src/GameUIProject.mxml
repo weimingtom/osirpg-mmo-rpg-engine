@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   minWidth="955" minHeight="600" xmlns:local="*" 
+			   applicationComplete="onCreate()">
+	<fx:Declarations>
+		<!-- 将非可视元素（例如服务、值对象）放在此处 -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import manager.ModuleManager;
+			
+			import mx.events.ModuleEvent;
+			import mx.modules.IModuleInfo;
+			
+			protected function onCreate():void{
+				var m:IModuleInfo = ModuleManager.getModule("Client.swf");
+				m.addEventListener(ModuleEvent.READY,onModuleReady);
+				//这个事件侦听加上才能正确侦听到ModuleEvent.READY，因为m中的侦听器为弱引用
+				m.addEventListener(ModuleEvent.PROGRESS,function(e:ModuleEvent):void{trace(e.bytesLoaded,"/",e.bytesTotal)});
+				m.load(null,null,null,moduleFactory);
+			}
+			
+			private function onModuleReady(e:ModuleEvent):void{
+				var client:* = e.module.factory.create();
+				addElement(client);
+				trace("addElement(client)");
+			}
+		]]>
+	</fx:Script>
+</s:Application>
