@@ -38,24 +38,57 @@ public class Acter implements Runnable {
 	}
 	
 	public void destroy(){
+		//关闭socket
+		if(server!=null){
+			
+			if(userName!=""){
+				server.removeClient(userName);
+			}
+			server=null;	
+		}
 		
+		close();
+		
+		runEnabled=false;
+	}
+	
+	public void close(){
+		state = 0;
+		try{
+
+			if(s!=null){
+				s.close();
+				s=null;
+			}
+		} catch (IOException e) {
+			System.out.println("ActerThread close error :: "+e);
+			//e.printStackTrace();
+		}finally{
+
+		}
 	}
 	
 	@Override
 	public void run() {
 		try{
 			while(runEnabled){
+				if(s.isClosed()) destroy();
+				
 				String command = getCommand();
+				System.out.println("command:"+command);
+				
 				if(state == 0){
 					userName = command;
 					state = 1;
 					send("您的名字是："+userName);
 					//同时需要通知所有Acter有人进来了
 					server.onMessage(this,"SYS_CAST",userName+" 进来了");
+					continue;
 				}
 				if(state == 1){
 					//玩家开始说话
 					server.onMessage(this,"ACTER_CHAT",command);
+					continue;
 				}
 			}	
 		}catch(Exception e){

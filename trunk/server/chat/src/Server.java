@@ -23,8 +23,7 @@ public class Server {
 	
 	public LinkedList<Acter> clients=new LinkedList<Acter>();
 	
-	public Server(){
-		
+	public Server(){		
 	}
 	
 	public void init(){
@@ -52,16 +51,26 @@ public class Server {
 	
 	public void onMessage(Acter sender, String msg, String value){
 		if(msg.equals("SYS_CAST")){
-			for(Iterator it=clients.iterator();it.hasNext();){
+			for(Iterator<Acter> it=clients.iterator();it.hasNext();){
 				Acter a = (Acter)it.next();
 				a.send(value);
 			}
 			
 		}
 		if(msg.equals("ACTER_CHAT")){
-			for(Iterator it=clients.iterator();it.hasNext();){
+			for(Iterator<Acter> it=clients.iterator();it.hasNext();){
 				Acter a = (Acter)it.next();
 				a.send(sender.userName + "หตฃบ" +value);
+			}
+		}
+	}
+	
+	public void removeClient(String userName){
+		for(Iterator<Acter> it=clients.iterator();it.hasNext();){
+			Acter a = (Acter)it.next();
+			if(a.userName == userName){
+				clients.remove(a);
+				break;
 			}
 		}
 	}
